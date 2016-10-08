@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>SearchDemoArray</title>
+    <style>
+        .centerBigView {
+            margin: auto;
+            width: 900px;
+            height: 1000px;
+            background-color: rebeccapurple;
+        }
+        .topSearchView {
+            margin: 20px auto;
+            width: 300px;
+            height: 40px;
+            background-color: yellow;
+        }
+        .topSearchView input {
+            display: block;
+            margin: auto;
+        }
+        .resultView {
+            margin: auto;
+            width: 600px;
+            height: 600px;
+            background-color: darkgrey;
+        }
+        li {
+            color: white;
+        }
+    </style>
+</head>
+
+<script src="angular.js"></script>
+
+<body ng-app="searchAPP" ng-controller="controller11">
+
+<div class="centerBigView">
+    <div class="topSearchView">
+        <input type="text" ng-model="searchText" ng-keyup="$event.keyCode==13 &&addToDataArray()"
+               blurred-focused='databaseForm.connectionName' search-text="searchText" realArray="" name="connectionName" update-array="updateArray" now-text="searchText" is-blur = "isBlur">
+    </div>
+    <div class="resultView">
+        <ul>
+            <li ng-repeat="result in realArray">
+                <span>{{result.goodName}}</span>
+                <button ng-click="removeGood($index)">X</button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    var app = angular.module("searchAPP", []);
+
+    app.controller('controller11', ['$scope', function ($scope) {
+
+        $scope.dataArray = [
+            {goodName: 'nature animal plant'},
+            {goodName: 'animal cat rabbit dog'},
+            {goodName: 'plant flower tree  grass'},
+            {goodName: 'person American Chinese '},
+        ];
+        $scope.realArray = [];
+        $scope.isBlur = true;
+        $scope.updateArray = function (newArray) {
+            $scope.realArray = newArray;
+        };
+
+        $scope.addToDataArray = function () {
+            var text = this.searchText.trim();
+            if (text) {
+                this.dataArray.push({goodName: text});
+                this.searchText = '';
+            }
+        };
+
+        $scope.removeGood = function (index) {
+            $scope.dataArray.splice(index, 1);
+        }
+
+        $scope.$watch('searchText', function (searchValue, lastTimeSearchText) {
+            if(searchValue==="" && (!$scope.isBlur)){
+                var  newWorkArray = [
+                    {goodName: 'netWork1'},
+                    {goodName: 'netWork2'},
+                    {goodName: 'netWork3'},
+                    {goodName: 'netWork4'},
+                ];
+                $scope.updateArray(newWorkArray);
+            } else  if(!$scope.isBlur){
+//            } else  {
+//                console.log("$scope.resultArray+++++==========" + this.resultArray);
+
+                $scope.searchArray = $scope.dataArray.filter(function (item) {
+                    return (item.goodName.toLocaleLowerCase().indexOf(searchValue) > -1);
+                });
+                $scope.updateArray($scope.searchArray);
+//                alert("search");
+            }
+
+        });
+    }]);
+
+    app.directive("blurredFocused", [function () {
+        return {
+            restrict: "A",
+            priority: -1,
+            scope: {
+                updateArray: "=",
+                nowText:'=',
+                searchText:'=',
+                isBlur:'=',
+            },
+            link: function (scope, ele, attrs) {
+                ele.on("blur", function () {
+
+                    scope.$apply(function () {
+                        /* clear the input text*/
+//                        scope.searchText = '',
+                        scope.nowText = '';
+                        scope.isBlur = true;
+                        var  newWorkArray = [];
+                        scope.updateArray(newWorkArray);
+                    });
+                });
+                ele.on("focus", function () {
+                    scope.isBlur = false;
+                    scope.$apply(function () {
+                        var  newWorkArray = [
+                            {goodName: 'readyNetGood1'},
+                            {goodName: 'readyNetGood2'},
+                            {goodName: 'readyNetGood3'},
+                            {goodName: 'readyNetGood4'},
+                        ];
+                        scope.updateArray(newWorkArray);
+                    });
+                })
+            }
+        }
+    }]);
+
+</script>
+</body>
+</html>
