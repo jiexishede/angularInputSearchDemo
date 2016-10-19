@@ -64,6 +64,13 @@
         ];
         $scope.realArray = [];
         $scope.isBlur = true;
+
+        $scope.newWorkArray = [
+            {goodName: 'readyNetGood1'},
+            {goodName: 'readyNetGood2'},
+            {goodName: 'readyNetGood3'},
+            {goodName: 'readyNetGood4'},
+        ];
         $scope.updateArray = function (newArray) {
             $scope.realArray = newArray;
         };
@@ -82,13 +89,8 @@
 
         $scope.$watch('searchText', function (searchValue, lastTimeSearchText) {
             if(searchValue==="" && (!$scope.isBlur)){
-                var  newWorkArray = [
-                    {goodName: 'netWork1'},
-                    {goodName: 'netWork2'},
-                    {goodName: 'netWork3'},
-                    {goodName: 'netWork4'},
-                ];
-                $scope.updateArray(newWorkArray);
+
+                $scope.updateArray($scope.newWorkArray);
             } else  if(!$scope.isBlur){
 //            } else  {
 //                console.log("$scope.resultArray+++++==========" + this.resultArray);
@@ -107,20 +109,20 @@
         return {
             restrict: "A",
             priority: -1,
-            scope: {
-                updateArray: "=",
-                nowText:'=',
-                searchText:'=',
-                isBlur:'=',
-            },
+            /*  如果下面的这个scope对应的值不注释, 那么focus事件就不支持了,需要再在时间函数内新建数组,然后赋值 */
+//            scope: {
+//                updateArray: "=",
+//                nowText:'=',
+//                searchText:'=',
+//                isBlur:'=',
+//            },
             link: function (scope, ele, attrs) {
                 ele.on("blur", function () {
-
+                    scope.isBlur = true;
                     scope.$apply(function () {
                         /* clear the input text*/
 //                        scope.searchText = '',
                         scope.nowText = '';
-                        scope.isBlur = true;
                         var  newWorkArray = [];
                         scope.updateArray(newWorkArray);
                     });
@@ -128,13 +130,7 @@
                 ele.on("focus", function () {
                     scope.isBlur = false;
                     scope.$apply(function () {
-                        var  newWorkArray = [
-                            {goodName: 'readyNetGood1'},
-                            {goodName: 'readyNetGood2'},
-                            {goodName: 'readyNetGood3'},
-                            {goodName: 'readyNetGood4'},
-                        ];
-                        scope.updateArray(newWorkArray);
+                        scope.updateArray(scope.newWorkArray);
                     });
                 })
             }
